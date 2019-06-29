@@ -11,6 +11,21 @@ public class Objects {
     private int x,y;
     Context context;
     Bitmap bitmap;
+
+    /**
+     * @param k0 - angle rate of part of laser
+     * @param b0 - free rate of part of laser
+     * @param x0 - x coordinate of entry of laser in square
+     * @param y0 - y coordinate of entry of laser in square
+     * @return Array of int[], if crossed then returned {0, xCross, yCross}, if bumped return {1, xBumped, yBumped} else
+     * return {-1}
+     */
+    public int[] isCrossed(double k0, double b0, double x0, double y0){
+        return null;
+    }
+    public Integer[][] performAction(double k, double b0, int x, int y, int count, Laser laser, Engine engine){
+        return null;
+    }
     protected boolean isHard(){
         return false;
     }

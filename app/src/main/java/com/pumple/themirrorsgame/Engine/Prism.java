@@ -75,7 +75,8 @@ class Prism extends Objects {
         return true;
     }
 
-    double[] isCrossed(double k, double z, double x, double y) {
+    @Override
+    public int[] isCrossed(double k, double z, double x, double y) {
             double[][] distanceOfCrossDots = new double[4][3];
             if (MyMath.isCrossedLines(k, z, coordinates[0][0], coordinates[0][1],
                     coordinates[1][0], coordinates[1][1])[0] == 1) {
@@ -134,11 +135,25 @@ class Prism extends Objects {
                 Log.e("Exception", e.toString());
             }
             if (distanceOfCrossDots[0][2] == 100000) {
-                return new double[]{-1};
+                return new int[]{-1};
             } else {
-                return new double[]{1, distanceOfCrossDots[0][0], distanceOfCrossDots[0][1]};
+                return new int[]{1, (int) distanceOfCrossDots[0][0], (int) distanceOfCrossDots[0][1]};
             }
     }
+
+    @Override
+    public Integer[][] performAction(double k, double b0, int x, int y, int count, Laser laser, Engine engine){
+        Object[] objects = refract(x, y, k, b0, true);
+        laser.setK((Double)objects[1]);
+        laser.setZ((Double)objects[2]);
+        laser.setCount((Integer)objects[0]);
+        Integer[][] result = new Integer[objects.length-3][2];
+        for (int i = 3; i < objects.length; i++) {
+            result[i - 3] = (Integer[]) objects[i];
+        }
+        return result;
+    }
+
     /**Вроде сделано - нет**/
     Object[] refract(int x, int y, double k, double z, boolean isFirstly) {
         boolean up = true;
@@ -433,7 +448,7 @@ class Prism extends Objects {
                     return result;
                 }
             } else {
-                if(k2!=-32000) {
+                if (k2 != -32000) {
                     return new Object[]{(int) Math.abs(xCross - x) / (xCross - x), k2, z2, new Integer[]{(int) xCross, (int) yCross}};
                 } else {
                     return new Object[]{(int) Math.abs(yCross - y) / (yCross - y), k2, z2, new Integer[]{(int) xCross, (int) yCross}};

@@ -121,15 +121,15 @@ public class Engine {
                     }
                     objects[x][y] = objects1;
             }
-        lazer(2);
+        laser(2);
     }
-    synchronized public void lazer(int a){
+    synchronized public void laser(int a){
         ArrayList<Laser> buffer = new ArrayList<>(1);
         buffer.add(new Laser(objects, canvas, list.get(0), list.get(1)));
         laserList = buffer;
         int counter = 0;
         while (counter < laserList.size()){
-            laserList.get(counter).lazer(2, this);
+            laserList.get(counter).laser(2, this);
             counter++;
         }
     }

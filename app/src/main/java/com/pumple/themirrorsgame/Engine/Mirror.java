@@ -91,10 +91,8 @@ public class Mirror extends Objects {
         return rot;
     }
 
-    /**
-     * Доделать - вроде готово
-     **/
-    int[] isCrossed(int x0, int y0, double k0, double b0) {
+    @Override
+    public int[] isCrossed(double k0, double b0, double x0, double y0) {
         if ((k0 != -32000) && (k != -32000)) {
             double XCross1, XCross2 = 0;
             double YCross1, YCross2 = 0;
@@ -389,7 +387,18 @@ public class Mirror extends Objects {
         b = centerOfSectorY - centerOfSectorX * k;
     }
 
-    Integer[] reflect(double k, double b, int x, int y, int count, Laser laser) {
+    @Override
+    public Integer[][] performAction(double k, double b0, int x, int y, int count, Laser laser, Engine engine){
+        Integer[] ints = reflect(k, b0, x, y, count, laser);
+        if (laser.getK() != -32000) {
+            count = ints[0] > ints[2] ? -1 : 1;
+        } else {
+            count = ints[1] > ints[3] ? -1 : 1;
+        }
+        laser.setCount(count);
+        return new Integer[][]{new Integer[]{ints[0], ints[1]}, new Integer[]{ints[2], ints[3]}};
+    }
+    private Integer[] reflect(double k, double b, int x, int y, int count, Laser laser) {
         double XCross, YCross;
         if ((k != -32000) && (this.k != -32000)) {
             Matrix delta1 = new Matrix(this.k, -1, k, -1);

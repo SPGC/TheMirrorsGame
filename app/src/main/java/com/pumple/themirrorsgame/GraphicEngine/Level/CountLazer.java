@@ -21,7 +21,7 @@ class CountLazer implements Callable<ArrayList<Laser>>{
 
     @Override
     public ArrayList<Laser> call() throws Exception {
-        engine.lazer(a);
+        engine.laser(a);
         //    Log.i("CountLaser", "I've been called");
         return engine.getLaserList();
     }
