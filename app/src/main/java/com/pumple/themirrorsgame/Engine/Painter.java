@@ -11,16 +11,33 @@ import com.example.themirrorsgame.R;
  * Created by Admin on 01.04.2019.
  */
 
-public class Painter extends Objects {
+class Painter extends Objects {
     private int color;
 
     private Engine engine;
 
-    public int getColor() {
+    int getColor() {
         return color;
     }
 
     private int[][] coordinates = new int[4][2];
+
+    @Override
+    public Integer[][] performAction(double k, double b0, int x, int y, int count, Laser laser, Engine engine){
+        int[] coordinatesOfCross = this.isCrossed(k, b0, count);
+        Laser laserOfOtherColor = new Laser(engine.getObjects(), engine.getCanvas(),
+                new Integer[]{coordinatesOfCross[1], coordinatesOfCross[2]}, new Integer[]{coordinatesOfCross[1] + count * 10, (int) ((coordinatesOfCross[1] + count * 10) * k + b0)});
+        laserOfOtherColor.setColorOfLaser(this.getColor());
+        laserOfOtherColor.setPainterFlag(false);
+        engine.addLaser(laserOfOtherColor);
+        laser.setReturn(true);
+        return new Integer[][]{new Integer[]{coordinatesOfCross[3], coordinatesOfCross[4]}};
+    }
+
+    @Override
+    public int[] isCrossed(double k0, double b0, double x0, double y0){
+        return null;
+    }
 
     private void countCoordinates(){
         try{

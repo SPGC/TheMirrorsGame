@@ -10,11 +10,15 @@ import java.util.Collections;
 public class Laser {
     private ArrayList<Integer[]> list = new ArrayList<>();
 
-    private Engine engine;
-
     private double k;
 
     private double z;
+
+    private boolean isReturn = false;
+
+    public void setReturn(boolean aReturn) {
+        isReturn = aReturn;
+    }
 
     private Objects[][] objects;
 
@@ -28,7 +32,7 @@ public class Laser {
 
     private int count;
 
-    public void setCount(int count) {
+    void setCount(int count) {
         this.count = count;
     }
 
@@ -40,13 +44,13 @@ public class Laser {
         return z;
     }
 
-    private boolean painterflag = true;
+    private boolean painterFlag = true;
 
-    public void setPainterflag(boolean painterflag) {
-        this.painterflag = painterflag;
+    void setPainterFlag(boolean painterFlag) {
+        this.painterFlag = painterFlag;
     }
 
-    public void setColorOfLaser(int colorOfLaser) {
+    void setColorOfLaser(int colorOfLaser) {
         this.colorOfLaser = colorOfLaser;
     }
 
@@ -171,14 +175,19 @@ public class Laser {
                 flag = true;
                 mirrorFlag = true;
                 prismCostilFlag = true;
-                painterflag = true;
+                painterFlag = true;
             } else if ((objects[xCoordinate][yCoordinate] != null) &&
                     (objects[xCoordinate][yCoordinate].getClass() == Mirror.class) &&
                     mirrorFlag && ((objects[xCoordinate][yCoordinate]).isCrossed(k, z, x, y)[0] == 0)/*Костылина, нужно переделать*/) {
-                Integer[][] result = objects[xCoordinate][yCoordinate].performAction(k, z, x, y, count, this, engine);
+                int[] ints = (objects[xCoordinate][yCoordinate]).isCrossed(k, z, x, y);
+                list.add(new Integer[]{ints[1],ints[2]});
+                Integer[][] result = objects[xCoordinate][yCoordinate].performAction(k, z, ints[1], ints[2], count, this, engine);
                 Collections.addAll(list, result);
                 x = list.get(list.size() - 1)[0];
                 y = list.get(list.size() - 1)[1];
+                if(isReturn) {
+                    return;
+                }
                 mirrorFlag = false;
             } else if ((objects[xCoordinate][yCoordinate] != null) &&
                     (objects[xCoordinate][yCoordinate].getClass() == Prism.class) && prismCostilFlag &&
@@ -189,19 +198,30 @@ public class Laser {
                 Collections.addAll(list, result);
                 x = list.get(list.size() - 1)[0];
                 y = list.get(list.size() - 1)[1];
+                if(isReturn) {
+                    return;
+                }
                 prismCostilFlag = false;
             } else if ((objects[xCoordinate][yCoordinate] != null) &&
                     (objects[xCoordinate][yCoordinate].getClass() == Painter.class) &&
-                    (((Painter) objects[xCoordinate][yCoordinate]).isCrossed(k, z, count)[0] == 0) && painterflag) {
-                Painter painter = ((Painter) objects[xCoordinate][yCoordinate]);
-                int[] coordinatesOfCross = painter.isCrossed(k, z, count);
-                Laser laserOfOtherColor = new Laser(engine.getObjects(), engine.getCanvas(),
-                        new Integer[]{coordinatesOfCross[1], coordinatesOfCross[2]}, new Integer[]{coordinatesOfCross[1] + count * 10, (int) ((coordinatesOfCross[1] + count * 10) * k + z)});
-                laserOfOtherColor.setColorOfLaser(painter.getColor());
-                laserOfOtherColor.setPainterflag(false);
-                engine.addLaser(laserOfOtherColor);
-                list.add(new Integer[]{coordinatesOfCross[3], coordinatesOfCross[4]});
-                return;
+                    (((Painter) objects[xCoordinate][yCoordinate]).isCrossed(k, z, count)[0] == 0) && painterFlag) {
+//                Painter painter = ((Painter) objects[xCoordinate][yCoordinate]);
+//                int[] coordinatesOfCross = painter.isCrossed(k, z, count);
+//                Laser laserOfOtherColor = new Laser(engine.getObjects(), engine.getCanvas(),
+//                        new Integer[]{coordinatesOfCross[1], coordinatesOfCross[2]}, new Integer[]{coordinatesOfCross[1] + count * 10, (int) ((coordinatesOfCross[1] + count * 10) * k + z)});
+//                laserOfOtherColor.setColorOfLaser(painter.getColor());
+//                laserOfOtherColor.setPainterFlag(false);
+//                engine.addLaser(laserOfOtherColor);
+//                list.add(new Integer[]{coordinatesOfCross[3], coordinatesOfCross[4]});
+                int[] ints = (objects[xCoordinate][yCoordinate]).isCrossed(k, z, x, y);
+                list.add(new Integer[]{ints[1], ints[2]});
+                Integer[][] result = objects[xCoordinate][yCoordinate].performAction(k, z, ints[1], ints[2], count, this, engine);
+                Collections.addAll(list, result);
+                x = list.get(list.size() - 1)[0];
+                y = list.get(list.size() - 1)[1];
+                if(isReturn) {
+                    return;
+                }
             } else {
                 if ((objects[xCoordinate][yCoordinate] != null)
                         && (objects[xCoordinate][yCoordinate].getClass() == Walls.class)) {

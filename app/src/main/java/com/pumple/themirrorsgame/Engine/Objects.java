@@ -9,7 +9,7 @@ import android.graphics.Bitmap;
 
 public class Objects {
     private int x,y;
-    Context context;
+    protected Context context;
     Bitmap bitmap;
 
     /**
