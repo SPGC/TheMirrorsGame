@@ -26,7 +26,7 @@ public class Laser {
 
     private int colorOfLaser = Color.RED;
 
-    public int getColorOfLaser(){
+    public int getColorOfLaser() {
         return colorOfLaser;
     }
 
@@ -73,29 +73,28 @@ public class Laser {
         this.z = z;
     }
 
-    void laser(int a, Engine engine){
+    void laser(int firstRecountablePoint, Engine engine) {
         ArrayList<Integer[]> list1 = new ArrayList<>();
-        for (int i = 0; i < a; i++) {
+        for (int i = 0; i < firstRecountablePoint; i++) {
             list1.add(list.get(i));
         }
         list = list1;
         Integer[] b, b1;
-        b = list.get(a - 2);
-        b1 = list.get(a - 1);
+        b = list.get(firstRecountablePoint - 2);
+        b1 = list.get(firstRecountablePoint - 1);
         int x = b1[0], y = b1[1];
-        if (!java.util.Objects.equals(b[0], b1[0])){
-            Matrix delt = new Matrix(b[0], 1, b1[0], 1);
-            Matrix deltk = new Matrix(b[1], 1, b1[1], 1);
-            Matrix deltz = new Matrix(b[0], b[1], b1[0], b1[1]);
-            k = deltk.count() / delt.count();
-            z = deltz.count() / delt.count();
-            if (b[0] < b1[0]){
+        if (!java.util.Objects.equals(b[0], b1[0])) {
+            Matrix delta = new Matrix(b[0], 1, b1[0], 1);
+            Matrix deltaK = new Matrix(b[1], 1, b1[1], 1);
+            Matrix deltaZ = new Matrix(b[0], b[1], b1[0], b1[1]);
+            k = deltaK.count() / delta.count();
+            z = deltaZ.count() / delta.count();
+            if (b[0] < b1[0]) {
                 count = 1;
             } else {
                 count = -1;
             }
-        }
-        else{
+        } else {
             k = -32000;
             z = x;
             if (b[1] < b1[1]) {
@@ -120,92 +119,95 @@ public class Laser {
             } else {
                 y += count;
             }
-            int xCoordinate = x / (canvas.getWidth() / Engine.OBJECTS_WIDTH);
-            int yCoordinate = y / (canvas.getHeight() / Engine.OBJECTS_HEIGHT);
-            if ((x  >= canvas.getWidth()) || (y  >= canvas.getHeight())
+            int widthInFields = canvas.getWidth() / Engine.OBJECTS_WIDTH;
+            int heightInFields = canvas.getHeight() / Engine.OBJECTS_HEIGHT;
+            int xCoordinate = x / widthInFields;
+            int yCoordinate = y / heightInFields;
+            Objects processedObject = objects[xCoordinate][yCoordinate];
+            if ((x >= canvas.getWidth()) || (y >= canvas.getHeight())
                     || (x <= 0) || (y <= 0)) {
                 Integer[] integers = {x, y};
                 list.add(integers);
-                Log.i("Lazer","Bad end" + x + " " + y);
+                Log.i("Laser", "Bad end" + x + " " + y);
                 return;
-            } else if ((objects[xCoordinate][yCoordinate] == null || objects[xCoordinate][yCoordinate].getClass() == Painter.class &&
-                    ((Painter) objects[xCoordinate][yCoordinate]).isCrossed(k, z, count)[0] == -1) && xCoordinate <= 19 && yCoordinate <= 9) {
+            } else if ((processedObject == null || processedObject.getClass() == Painter.class &&
+                    ((Painter) processedObject).isCrossed(k, z, count)[0] == -1) && xCoordinate <= 19 && yCoordinate <= 9) {
 
                 if (k != -32000) {
                     if (count > 0) {
                         if (k <= 0) {
-                            if ((((xCoordinate) + 1) * (canvas.getWidth() / Engine.OBJECTS_WIDTH) - 1) * k + z >=
-                                    (yCoordinate) * (canvas.getHeight() / Engine.OBJECTS_HEIGHT)) {
-                                x = ((xCoordinate) + count) * (canvas.getWidth() / Engine.OBJECTS_WIDTH);
+                            if ((((xCoordinate) + 1) * widthInFields - 1) * k + z >=
+                                    (yCoordinate) * heightInFields) {
+                                x = ((xCoordinate) + count) * widthInFields;
                             } else {
-                                x = (int) ((yCoordinate * (canvas.getHeight() / Engine.OBJECTS_HEIGHT) - z - 1) / k);
+                                x = (int) ((yCoordinate * heightInFields - z - 1) / k);
                             }
                         } else {
-                            if ((((xCoordinate) + 1) * (canvas.getWidth() / Engine.OBJECTS_WIDTH) - 1) * k + z <=
-                                    (yCoordinate + 1) * (canvas.getHeight() / Engine.OBJECTS_HEIGHT) - 1) {
-                                x = ((xCoordinate) + count) * (canvas.getWidth() / Engine.OBJECTS_WIDTH);
+                            if ((((xCoordinate) + 1) * widthInFields - 1) * k + z <=
+                                    (yCoordinate + 1) * heightInFields - 1) {
+                                x = ((xCoordinate) + count) * widthInFields;
                             } else {
-                                x = (int) (((yCoordinate + 1) * (canvas.getHeight() / Engine.OBJECTS_HEIGHT) - z) / k);
+                                x = (int) (((yCoordinate + 1) * heightInFields - z) / k);
                             }
                         }
                     } else {
                         if (k <= 0) {
-                            if (((xCoordinate) * (canvas.getWidth() / Engine.OBJECTS_WIDTH) * k + z) <=
-                                    (yCoordinate + 1) * (canvas.getHeight() / Engine.OBJECTS_HEIGHT) - 1) {
-                                x = xCoordinate * (canvas.getWidth() / Engine.OBJECTS_WIDTH) - 1;
+                            if (((xCoordinate) * widthInFields * k + z) <=
+                                    (yCoordinate + 1) * heightInFields - 1) {
+                                x = xCoordinate * widthInFields - 1;
                             } else {
-                                x = (int) (((yCoordinate + 1) * (canvas.getHeight() / Engine.OBJECTS_HEIGHT) - z) / k);
+                                x = (int) (((yCoordinate + 1) * heightInFields - z) / k);
                             }
                         } else {
-                            if ((((xCoordinate)) * (canvas.getWidth() / Engine.OBJECTS_WIDTH) * k + z) >=
-                                    (yCoordinate) * (canvas.getHeight() / Engine.OBJECTS_HEIGHT)) {
-                                x = ((xCoordinate)) * (canvas.getWidth() / Engine.OBJECTS_WIDTH) - 1;
+                            if ((((xCoordinate)) * widthInFields * k + z) >=
+                                    (yCoordinate) * heightInFields) {
+                                x = ((xCoordinate)) * widthInFields - 1;
                             } else {
-                                x = (int) (((yCoordinate) * (canvas.getHeight() / Engine.OBJECTS_HEIGHT) - z - 1) / k);
+                                x = (int) (((yCoordinate) * heightInFields - z - 1) / k);
                             }
                         }
                     }
                 } else {
                     if (count > 0) {
-                        y = (yCoordinate + 1) * (canvas.getHeight() / Engine.OBJECTS_HEIGHT);
+                        y = (yCoordinate + 1) * heightInFields;
                     } else {
-                        y = (yCoordinate) * (canvas.getHeight() / Engine.OBJECTS_HEIGHT) - 1;
+                        y = (yCoordinate) * heightInFields - 1;
                     }
                 }
                 flag = true;
                 mirrorFlag = true;
                 prismCostilFlag = true;
                 painterFlag = true;
-            } else if ((objects[xCoordinate][yCoordinate] != null) &&
-                    (objects[xCoordinate][yCoordinate].getClass() == Mirror.class) &&
-                    mirrorFlag && ((objects[xCoordinate][yCoordinate]).isCrossed(k, z, x, y)[0] == 0)/*Костылина, нужно переделать*/) {
-                int[] ints = (objects[xCoordinate][yCoordinate]).isCrossed(k, z, x, y);
-                list.add(new Integer[]{ints[1],ints[2]});
-                Integer[][] result = objects[xCoordinate][yCoordinate].performAction(k, z, ints[1], ints[2], count, this, engine);
+            } else if ((processedObject != null) &&
+                    (processedObject.getClass() == Mirror.class) &&
+                    mirrorFlag && ((processedObject).isCrossed(k, z, x, y)[0] == 0)/*Костылина, нужно переделать*/) {
+                int[] ints = (processedObject).isCrossed(k, z, x, y);
+                list.add(new Integer[]{ints[1], ints[2]});
+                Integer[][] result = processedObject.performAction(k, z, ints[1], ints[2], count, this, engine);
                 Collections.addAll(list, result);
                 x = list.get(list.size() - 1)[0];
                 y = list.get(list.size() - 1)[1];
-                if(isReturn) {
+                if (isReturn) {
                     return;
                 }
                 mirrorFlag = false;
-            } else if ((objects[xCoordinate][yCoordinate] != null) &&
-                    (objects[xCoordinate][yCoordinate].getClass() == Prism.class) && prismCostilFlag &&
-                    ((objects[xCoordinate][yCoordinate]).isCrossed(k, z, x, y)[0] == 1)) {
-                int[] ints = (objects[xCoordinate][yCoordinate]).isCrossed(k, z, x, y);
+            } else if ((processedObject != null) &&
+                    (processedObject.getClass() == Prism.class) && prismCostilFlag &&
+                    ((processedObject).isCrossed(k, z, x, y)[0] == 1)) {
+                int[] ints = (processedObject).isCrossed(k, z, x, y);
                 list.add(new Integer[]{ints[1], ints[2]});
-                Integer[][] result = objects[xCoordinate][yCoordinate].performAction(k, z, ints[1], ints[2], count, this, engine);
+                Integer[][] result = processedObject.performAction(k, z, ints[1], ints[2], count, this, engine);
                 Collections.addAll(list, result);
                 x = list.get(list.size() - 1)[0];
                 y = list.get(list.size() - 1)[1];
-                if(isReturn) {
+                if (isReturn) {
                     return;
                 }
                 prismCostilFlag = false;
-            } else if ((objects[xCoordinate][yCoordinate] != null) &&
-                    (objects[xCoordinate][yCoordinate].getClass() == Painter.class) &&
-                    (((Painter) objects[xCoordinate][yCoordinate]).isCrossed(k, z, count)[0] == 0) && painterFlag) {
-//                Painter painter = ((Painter) objects[xCoordinate][yCoordinate]);
+            } else if ((processedObject != null) &&
+                    (processedObject.getClass() == Painter.class) &&
+                    (((Painter) processedObject).isCrossed(k, z, count)[0] == 0) && painterFlag) {
+//                Painter painter = ((Painter) processedObject);
 //                int[] coordinatesOfCross = painter.isCrossed(k, z, count);
 //                Laser laserOfOtherColor = new Laser(engine.getObjects(), engine.getCanvas(),
 //                        new Integer[]{coordinatesOfCross[1], coordinatesOfCross[2]}, new Integer[]{coordinatesOfCross[1] + count * 10, (int) ((coordinatesOfCross[1] + count * 10) * k + z)});
@@ -213,47 +215,43 @@ public class Laser {
 //                laserOfOtherColor.setPainterFlag(false);
 //                engine.addLaser(laserOfOtherColor);
 //                list.add(new Integer[]{coordinatesOfCross[3], coordinatesOfCross[4]});
-                int[] ints = (objects[xCoordinate][yCoordinate]).isCrossed(k, z, x, y);
+                int[] ints = (processedObject).isCrossed(k, z, x, y);
                 list.add(new Integer[]{ints[1], ints[2]});
-                Integer[][] result = objects[xCoordinate][yCoordinate].performAction(k, z, ints[1], ints[2], count, this, engine);
+                Integer[][] result = processedObject.performAction(k, z, ints[1], ints[2], count, this, engine);
                 Collections.addAll(list, result);
                 x = list.get(list.size() - 1)[0];
                 y = list.get(list.size() - 1)[1];
-                if(isReturn) {
+                if (isReturn) {
                     return;
                 }
-            } else {
-                if ((objects[xCoordinate][yCoordinate] != null)
-                        && (objects[xCoordinate][yCoordinate].getClass() == Walls.class)) {
-                    Integer[] integers = {x, y};
-                    list.add(integers);
-                    return;
-                } else {
-                    if ((objects[xCoordinate][yCoordinate] != null)
-                            && (objects[xCoordinate][yCoordinate].getClass() == Container.class)) {
-                        int[] ints = ((Container) (objects[xCoordinate][yCoordinate])).isComplete(k, z, count, colorOfLaser);
-                        Log.i("Container", "Coordinates x = " + ints[1] + "; y = " + ints[2]);
-                        list.add(new Integer[]{ints[1], ints[2], ints[0]});
-                        return;
-                    } else if ((objects[xCoordinate][yCoordinate] != null) &&
-                            (objects[xCoordinate][yCoordinate].getClass() == Mirror.class) &&
-                            mirrorFlag && ((objects[xCoordinate][yCoordinate]).isCrossed(k, z, x, y)[0] == 1)) {
-                        list.add(new Integer[]{(objects[xCoordinate][yCoordinate]).isCrossed(k, z, x, y)[1],
-                                (objects[xCoordinate][yCoordinate]).isCrossed(k, z, x, y)[2]});
-                        return;
-                    } else if ((objects[xCoordinate][yCoordinate] != null)
-                            && (objects[xCoordinate][yCoordinate].getClass() == Sourse.class) && flag) {
-                        Integer[] integers = {x, y};
-                        list.add(integers);
-                        return;
-                    } else if ((objects[xCoordinate][yCoordinate] != null) &&
-                            (objects[xCoordinate][yCoordinate].getClass() == Painter.class) &&
-                            (((Painter) objects[xCoordinate][yCoordinate]).isCrossed(k, z, count)[0] == 1)) {
-                        int[] coordinatesOfCross = ((Painter) objects[xCoordinate][yCoordinate]).isCrossed(k, z, count);
-                        list.add(new Integer[]{coordinatesOfCross[1], coordinatesOfCross[2]});
-                        return;
-                    }
-                }
+            } else if ((processedObject != null) &&
+                    (processedObject.getClass() == Painter.class) &&
+                    (((Painter) processedObject).isCrossed(k, z, count)[0] == 1)) {
+                int[] coordinatesOfCross = ((Painter) processedObject).isCrossed(k, z, count);
+                list.add(new Integer[]{coordinatesOfCross[1], coordinatesOfCross[2]});
+                return;
+            } else if ((processedObject != null)
+                    && (processedObject.getClass() == Walls.class)) {
+                Integer[] integers = {x, y};
+                list.add(integers);
+                return;
+            } else if ((processedObject != null)
+                    && (processedObject.getClass() == Container.class)) {
+                int[] ints = ((Container) (processedObject)).isComplete(k, z, count, colorOfLaser);
+                Log.i("Container", "Coordinates x = " + ints[1] + "; y = " + ints[2]);
+                list.add(new Integer[]{ints[1], ints[2], ints[0]});
+                return;
+            } else if ((processedObject != null) &&
+                    (processedObject.getClass() == Mirror.class) &&
+                    mirrorFlag && ((processedObject).isCrossed(k, z, x, y)[0] == 1)) {
+                list.add(new Integer[]{(processedObject).isCrossed(k, z, x, y)[1],
+                        (processedObject).isCrossed(k, z, x, y)[2]});
+                return;
+            } else if ((processedObject != null)
+                    && (processedObject.getClass() == Sourse.class) && flag) {
+                Integer[] integers = {x, y};
+                list.add(integers);
+                return;
             }
         }
     }

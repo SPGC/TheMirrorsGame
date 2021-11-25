@@ -68,7 +68,7 @@ public class Engine {
     public void initLevel (InputStream file) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(file));
         String s;
-        list = new ArrayList<>();//Массив для глобальных координат (координат устройства)
+        list = new ArrayList<>(); //Массив для глобальных координат (координат устройства)
         laserList = new ArrayList<>(1);
         StringTokenizer stringTokenizer;
         for (int i = 0; i < OBJECTS_WIDTH; i++) {
